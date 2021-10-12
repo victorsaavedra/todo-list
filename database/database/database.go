@@ -2,7 +2,6 @@ package database
 
 import (
 	"github.com/victorsaavedra/todo-list/framework"
-	"github.com/victorsaavedra/todo-list/models"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
@@ -24,6 +23,4 @@ func InitDatabase() {
 	if err != nil {
 		panic("Failed to connect to DB")
 	}
-
-	DBConn.AutoMigrate(&models.Todo{})
 }

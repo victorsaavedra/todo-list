@@ -1,15 +1,27 @@
-.PHONY: local
-local: go-init
-	docker compose -f .docker/dev/docker-compose.yml build
+.PHONY: docker-build docker-run-air local
 
-.PHONY: go-init
-go-init: start-air
-	docker compose -f .docker/dev/docker-compose.yml run --rm todo-list go mod init github.com/victorsaavedra/todo-list
+docker-build:
+	docker compose -f .docker/dev/docker-compose.yaml build
 
-.PHONY: start-air
-start-air: start
-	docker compose -f .docker/dev/docker-compose.yml run --rm todo-list air init
+local: docker-build
+ifneq ("$(wildcard $(go.mod))", "")
+	docker compose -f .docker/dev/docker-compose.yaml run todo-list go mod init github.com/victorsaavedra/todo-list
+endif
+ifneq ("$(wildcard $(.air.toml))", "")
+	docker-compose -f .docker/dev/docker-compose.yaml run --rm todo-list air init
+endif
 
-.PHONY: start
-start:
-	docker compose -f .docker/dev/docker-compose.yml up --remove-orphans
+docker-run-air:
+	docker compose -f .docker/dev/docker-compose.yaml up --remove-orphans
+
+#.PHONY: start
+#start: go-run
+#	docker compose -f .docker/dev/docker-compose.yaml up --remove-orphans
+
+#.PHONY: go-run
+#go-run:
+#	docker compose -f .docker/dev/docker-compose.yaml run --rm todo-list go run main.go
+
+#.PHONE: stop
+#stop:
+#	docker-compose -f .docker/dev/docker-compose.yaml stop
